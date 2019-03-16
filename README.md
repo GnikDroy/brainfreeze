@@ -23,8 +23,7 @@ Make sure that the requirements are met.
 
 ### Linux
 
-I think most systems come with as and ld if you have gcc installed.
-A more concrete way to meet the requirements will be added soon.
+You need to install build-essential to obtain the gnu linker, assembler and gcc.
 
 `sudo apt-get update`
 
@@ -83,6 +82,6 @@ All the documentation will be created under the `docs` folder.
 
 ## Optimization
 
-Currently this compiler does not implement any sort of optimizations. It may be added in the future.
+Currently this compiler does not implement much optimization techniques. It may be added in the future.
 
 I used the project image from <a href="https://pixabay.com/vectors/brain-icon-human-background-idea-1710293/">here</a>.
