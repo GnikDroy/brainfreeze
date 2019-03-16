@@ -1,7 +1,10 @@
 <p align="center">
 <h1 align="center"> Brainfreeze </h1>
 
-<h3 align="center">A brainfu*k compiler written in C</h3>
+<h3 align="center">A brainfu*k compiler written in C.</h3>
+</p>
+<p align="center">
+<img align="center" width="30%" src="https://raw.githubusercontent.com/GnikDroy/brainfreeze/master/images/brainfreeze.png">
 </p>
 
 
@@ -81,3 +84,5 @@ All the documentation will be created under the `docs` folder.
 ## Optimization
 
 Currently this compiler does not implement any sort of optimizations. It may be added in the future.
+
+I used the project image from <a href="https://pixabay.com/vectors/brain-icon-human-background-idea-1710293/">here</a>.
