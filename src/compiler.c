@@ -164,6 +164,7 @@ void execute_assembler(char *assembler_input_file)
     strcat(command, assembler_input_file);
     assembler_input_file[strlen(assembler_input_file) - 1] = 's';
     system(command);
+    remove(assembler_input_file);
     free(command);
 }
 
@@ -176,6 +177,7 @@ void execute_linker(const char *linker_input_file)
     strcat(command, " -o ");
     strcat(command, globalArgs.output_file);
     system(command);
+    remove(linker_input_file);
     free(command);
 }
 
