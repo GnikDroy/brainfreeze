@@ -11,7 +11,6 @@
 #include "stack.h"
 #include "compiler.h"
 
-
 void verify_syntax(FILE *inputfp)
 {
     char c;
@@ -31,7 +30,7 @@ void verify_syntax(FILE *inputfp)
             line++;
         default:;
         }
-        
+
         if (stack_count < 0)
         {
             fprintf(stderr, "SYNTAX ERROR: Unexpected instruction '%c' in line %u. A corresponding bracket couldn't be found.\n", c, line);
@@ -43,13 +42,12 @@ void verify_syntax(FILE *inputfp)
         fprintf(stderr, "SYNTAX ERROR: Brackets are not balanced. Found %u stray brackets.\n", stack_count);
         exit(EXIT_FAILURE);
     }
-    
+
     fseek(inputfp, 0, SEEK_SET);
 }
 
 void assemble(FILE *inputfp, FILE *outputfp)
 {
-
     char c;
     fputs(ALLOCATE_MEMORY, outputfp);
     unsigned int jmp_label = 0;
@@ -59,17 +57,49 @@ void assemble(FILE *inputfp, FILE *outputfp)
         switch (c)
         {
         case '+':
-            fputs(INCREMENT, outputfp);
-            break;
         case '-':
-            fputs(DECREMENT, outputfp);
+        {
+            int counter = (c == '+') ? 1 : -1;
+            while ((c = fgetc(inputfp)) != EOF) //Counts the total value to be put into the cell
+            {
+                if (c == '+')
+                    counter++;
+                if (c == '-')
+                    counter--;
+                if (c == '<' || c == '>' || c == '.' || c == ',' || c == ']' || c == '[')
+                {
+                    fseek(inputfp, -1, SEEK_CUR);
+                    break;
+                }
+            }
+            if (counter > 0)
+                fprintf(outputfp, INCREMENT, counter);
+            else if (counter < 0)
+                fprintf(outputfp, DECREMENT, (-counter));
             break;
+        }
         case '>':
-            fputs(INCREMENT_POINTER, outputfp);
-            break;
         case '<':
-            fputs(DECREMENT_POINTER, outputfp);
+        {
+            int counter = (c == '>') ? 1 : -1;
+            while ((c = fgetc(inputfp)) != EOF) //Counts the total value be increased to the pointer of cell.
+            {
+                if (c == '>')
+                    counter++;
+                if (c == '<')
+                    counter--;
+                if (c == '+' || c == '-' || c == '.' || c == ',' || c == ']' || c == '[')
+                {
+                    fseek(inputfp, -1, SEEK_CUR);
+                    break;
+                }
+            }
+            if (counter > 0)
+                fprintf(outputfp, INCREMENT_POINTER, counter * sizeof(char) * 4);
+            else if (counter < 0)
+                fprintf(outputfp, DECREMENT_POINTER, (-counter) * sizeof(char) * 4);
             break;
+        }
         case '.':
             fputs(WRITE_CHAR, outputfp);
             break;
@@ -91,7 +121,6 @@ void assemble(FILE *inputfp, FILE *outputfp)
             fputs(LOOP_END, outputfp);
             fprintf(outputfp, "_LABEL_%u\n", stack->jmp_address);
             pop(&stack);
-            break;
         }
         default:;
         }
@@ -170,7 +199,7 @@ void execute_assembler(char *assembler_input_file)
 
 void execute_linker(const char *linker_input_file)
 {
-    const char *start_command = "ld -m elf_i386 ";
+    const char *start_command = "ld -m elf_i386 -s ";
     char *command = (char *)malloc(sizeof(char) * (strlen(start_command) + strlen(linker_input_file) * 2 + 4));
     strcpy(command, start_command);
     strcat(command, linker_input_file);
@@ -194,11 +223,10 @@ void compile(FILE *inputfp)
     free(input_file);
 }
 
-
 int main(int argc, char **argv)
 {
     parse_args(argc, argv);
-    
+
     FILE *inputfp = fopen(globalArgs.input_file, "r");
 
     if (inputfp == NULL)
