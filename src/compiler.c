@@ -87,9 +87,9 @@ void assemble(FILE *inputfp, FILE *outputfp)
                 }
             }
             if (counter > 0)
-                fprintf(outputfp, INCREMENT_POINTER, counter * sizeof(char) * 4);
+                fprintf(outputfp, INCREMENT_POINTER, (unsigned int)(counter * sizeof(char) * 4));
             else if (counter < 0)
-                fprintf(outputfp, DECREMENT_POINTER, (-counter) * sizeof(char) * 4);
+                fprintf(outputfp, DECREMENT_POINTER, (unsigned int)((-counter) * sizeof(char) * 4));
             break;
         }
         case '.':
@@ -175,6 +175,11 @@ void execute_assembler(char *assembler_input_file)
 {
     const char *start_command = "as --32 ";
     char *command = (char *)malloc(sizeof(char) * (strlen(start_command) + strlen(assembler_input_file) * 2 + 5));
+    if (command == NULL)
+    {
+        fputs("FATAL: Memory allocation failed.", stderr);
+        exit(EXIT_FAILURE);
+    }
     strcpy(command, start_command);
     strcat(command, assembler_input_file);
     strcat(command, " -o ");
@@ -190,6 +195,11 @@ void execute_linker(const char *linker_input_file)
 {
     const char *start_command = "ld -m elf_i386 -s ";
     char *command = (char *)malloc(sizeof(char) * (strlen(start_command) + strlen(linker_input_file) * 2 + 4));
+    if (command == NULL)
+    {
+        fputs("FATAL: Memory allocation failed.", stderr);
+        exit(EXIT_FAILURE);
+    }
     strcpy(command, start_command);
     strcat(command, linker_input_file);
     strcat(command, " -o ");
@@ -203,6 +213,11 @@ void compile(FILE *inputfp)
 {
     int str_size = strlen(global_args.output_file) + 3;
     char *input_file = (char *)malloc(str_size * sizeof(char));
+    if (input_file == NULL)
+    {
+        fputs("FATAL: Memory allocation failed.", stderr);
+        exit(EXIT_FAILURE);
+    }
     strcpy(input_file, global_args.output_file);
     strcat(input_file, ".s");
     create_assembly_source(inputfp, input_file);

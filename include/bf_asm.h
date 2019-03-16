@@ -15,7 +15,7 @@
 /** The assembly instructions for allocating 30,000 bytes of memory.
     Uses the brk() system call without any library wrappers. 
     NOTE: brk() zeros out memory during first call. No need to initialize to 0.*/
-char ALLOCATE_MEMORY[] = ".intel_syntax noprefix\n"
+const char ALLOCATE_MEMORY[] = ".intel_syntax noprefix\n"
                          ".global _start\n"
                          "_start:\n"
                          "mov eax,0x2d\n"
@@ -32,45 +32,45 @@ char ALLOCATE_MEMORY[] = ".intel_syntax noprefix\n"
                          "inc edx\n";
 
 /** The assembly instructions for increasing the current cell pointer. */
-char INCREMENT_POINTER[] = "add edi,0x%02x\n";
+const char INCREMENT_POINTER[] = "add edi,0x%02x\n";
 
 /** The assembly instructions for decreasing the current cell pointer. */
-char DECREMENT_POINTER[] = "sub edi,0x%02x\n";
+const char DECREMENT_POINTER[] = "sub edi,0x%02x\n";
 
 /** The assembly instruction to increase the value at current cell */
-char INCREMENT[] = "add byte ptr [edi],0x%02x\n";
+const char INCREMENT[] = "add byte ptr [edi],0x%02x\n";
 
 /** The assembly instruction to decrease the value at current cell */
-char DECREMENT[] = "sub byte ptr [edi],0x%02x\n";
+const char DECREMENT[] = "sub byte ptr [edi],0x%02x\n";
 
 /** The assembly instructions for starting a loop in bf. LABEL references are not present and are calculated at compile time. */
-char LOOP_START[] =
+const char LOOP_START[] =
     //"_LABEL_XXXX:\n"
     "cmp byte ptr [edi],0x00\n"
     //"je _LABEL_XXXX\n";
     "je ";
 
 /** The assembly instructions for ending a loop in bf. LABEL references are not present and are calculated at compile time. */
-char LOOP_END[] =
+const char LOOP_END[] =
     //"_LABELXXXX:\n"
     "cmp byte ptr [edi],0x00\n"
     //"jne _LABEL_XXXX\n";
     "jne ";
 
 /** The assembly instructions for the write syscall. Executes the raw syscall. The value is printed to stdout. */
-char WRITE_CHAR[] = "mov eax,0x04\n"
+const char WRITE_CHAR[] = "mov eax,0x04\n"
                     "xor ebx,ebx\n"
                     "inc ebx\n"
                     "mov ecx,edi\n"
                     "int 0x80\n";
 
 /** The assembly instructions for the read syscall. Executes the raw syscall. The value is stored in the current cell. */
-char READ_CHAR[] = "mov eax,0x03\n"
+const char READ_CHAR[] = "mov eax,0x03\n"
                    "xor ebx,ebx\n"
                    "mov ecx,edi\n"
                    "int 0x80\n";
 
 /** The assembly instructions for the exit syscall. Executes the raw syscall.*/
-char SYS_EXIT_CALL[] = "mov eax,0x01\n"
+const char SYS_EXIT_CALL[] = "mov eax,0x01\n"
                        "xor ebx,ebx\n"
                        "int 0x80\n";
