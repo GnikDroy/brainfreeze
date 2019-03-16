@@ -18,19 +18,12 @@ void verify_syntax(FILE *inputfp)
     unsigned int line = 0;
     while ((c = fgetc(inputfp)) != EOF)
     {
-        switch (c)
-        {
-        case ']':
+        if (c == ']')
             stack_count--;
-            break;
-        case '[':
+        if (c == '[')
             stack_count++;
-            break;
-        case '\n':
+        if (c == '\n')
             line++;
-        default:;
-        }
-
         if (stack_count < 0)
         {
             fprintf(stderr, "SYNTAX ERROR: Unexpected instruction '%c' in line %u. A corresponding bracket couldn't be found.\n", c, line);
@@ -42,7 +35,6 @@ void verify_syntax(FILE *inputfp)
         fprintf(stderr, "SYNTAX ERROR: Brackets are not balanced. Found %u stray brackets.\n", stack_count);
         exit(EXIT_FAILURE);
     }
-
     fseek(inputfp, 0, SEEK_SET);
 }
 
@@ -144,32 +136,29 @@ void print_help()
 
 void parse_args(int argc, char **argv)
 {
-    globalArgs.output_file = "a.out";
-    globalArgs.input_file = NULL;
+    global_args.output_file = "a.out";
+    global_args.input_file = NULL;
     int opt;
     while ((opt = getopt(argc, argv, "ho:f:")) != -1)
     {
-        switch (opt)
+        if (opt == 'h')
         {
-        case 'h':
             print_help();
             exit(EXIT_SUCCESS);
-            break;
-        case 'o':
-            globalArgs.output_file = optarg;
-            break;
-        case 'f':
-            globalArgs.input_file = optarg;
-        default:;
         }
+        if (opt == 'o')
+            global_args.output_file = optarg;
+        if (opt == 'f')
+            global_args.input_file = optarg;
     }
-    if (globalArgs.input_file == NULL)
+    if (global_args.input_file == NULL)
     {
         fputs("ERROR: No input file was specified.\n\n", stderr);
         print_help();
         exit(EXIT_FAILURE);
     }
 }
+
 void create_assembly_source(FILE *inputfp, const char *assembler_output_file)
 {
     FILE *assembler_output_fp = fopen(assembler_output_file, "w");
@@ -204,7 +193,7 @@ void execute_linker(const char *linker_input_file)
     strcpy(command, start_command);
     strcat(command, linker_input_file);
     strcat(command, " -o ");
-    strcat(command, globalArgs.output_file);
+    strcat(command, global_args.output_file);
     system(command);
     remove(linker_input_file);
     free(command);
@@ -212,9 +201,9 @@ void execute_linker(const char *linker_input_file)
 
 void compile(FILE *inputfp)
 {
-    int str_size = strlen(globalArgs.output_file) + 3;
+    int str_size = strlen(global_args.output_file) + 3;
     char *input_file = (char *)malloc(str_size * sizeof(char));
-    strcpy(input_file, globalArgs.output_file);
+    strcpy(input_file, global_args.output_file);
     strcat(input_file, ".s");
     create_assembly_source(inputfp, input_file);
     execute_assembler(input_file);
@@ -227,7 +216,7 @@ int main(int argc, char **argv)
 {
     parse_args(argc, argv);
 
-    FILE *inputfp = fopen(globalArgs.input_file, "r");
+    FILE *inputfp = fopen(global_args.input_file, "r");
 
     if (inputfp == NULL)
     {

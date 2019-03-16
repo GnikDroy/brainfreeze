@@ -63,7 +63,7 @@ After compiling the compiler, we can compile other bf source files! ;)
 Notice that there are some examples in the `examples` directory. You can use them for testing. I have made sure to use open source code or given proper credits to the owners of the code.
 
 
-## Creating the documentation.
+## Creating the documentation
 
 The project uses Doxygen for managing its documentation.
 

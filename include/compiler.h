@@ -8,13 +8,13 @@
 #include <stdio.h>
 
 /** The structure which represents the parsed global args.*/
-struct globalArgs_t
+struct global_args_t
 {
     /** The path to the source brainfuck code.*/
     char *input_file;
     /** The path to the output executable file.*/
     char *output_file;
-} globalArgs; ///< The variable which is populated by the parse_args() function.
+} global_args; ///< The variable which is populated by the parse_args() function.
 
 /**
  * @brief Print the help text
@@ -24,7 +24,7 @@ void print_help();
 /**
  * @brief Parse the args provided from the command line
  *
- * The globalArgs struct is populated from this function.
+ * The global_args struct is populated from this function.
  * 
  * @param argc Number of arguments.
  * @param argv The list of arguments.
